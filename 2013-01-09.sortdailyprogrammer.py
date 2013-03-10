@@ -29,7 +29,7 @@ def format_title(title):
   if m:
     name = m.group(1)
 
-  return difficulty.title() + " " + number + " " + name
+  return difficulty.title() + " " + number + ": " + name
 
 def get_posts():
   
@@ -40,7 +40,7 @@ def get_posts():
   while True:
     for post in posts:
       title = post['data']['title']
-      if "#" not in title:
+      if "#" not in title or "Challenge" not in title:
         continue
       title = format_title(title) 
       url = post['data']['url']
@@ -56,28 +56,30 @@ def get_posts():
 def sort_level(post):
   first_word = (post.split())[0]
   second_word = (post.split())[1]
-  return (first_word,second_word[1:])
+  second_len = len(second_word)
+  second_word = int(second_word[1:second_len-1])
 
-#  if "Easy" in first_word:
-#    return (0,second_word)
-#  if "Medium" in first_word:
-#    return (1,second_word)
-#  if "Hard" in first_word:
-#    return (2,second_word)
-#  return 3
+  if "Easy" in first_word:
+    return (0,second_word)
+  if "Medium" in first_word:
+    return (1,second_word)
+  if "Hard" in first_word:
+    return (2,second_word)
+  return 3
 
 def sort_number(post):
   first_word = (post.split())[0]
   second_word = (post.split())[1]
-  return (second_word[1:],first_word)
-#  if "Easy" in first_word:
-#    return (second_word,0)
-#  if "Medium" in first_word:
-#    return (second_word,1)
-#  if "Hard" in first_word:
-#    return (second_word,2)
-#  return 3
-#
+  second_len = len(second_word)
+  second_word = int(second_word[1:second_len-1])
+  if "Easy" in first_word:
+    return (second_word,0)
+  if "Medium" in first_word:
+    return (second_word,1)
+  if "Hard" in first_word:
+    return (second_word,2)
+  return 3
+
 def main():
   posts = get_posts()
   print "List One:"

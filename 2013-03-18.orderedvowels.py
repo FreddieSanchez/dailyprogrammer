@@ -6,11 +6,11 @@ def main():
   words = f.readlines()
   f.close()
 
-  pattern = re.compile(".*a.*e.*i.*o.*u.*y.*")
+  pattern = re.compile("[aeiouy]")
   for w in words:
-    m = re.search(pattern, w)
-    if m:
-      print m.group()
+    word = "".join(re.findall(pattern, w))
+    if word == "aeiouy":
+      print w,
 
 if __name__ == "__main__":
   main()

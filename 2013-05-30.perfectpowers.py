@@ -23,7 +23,7 @@ def infinity():
 x = int(raw_input())      
 for y in list_primes():
   if x % y == 0:
-    print int(math.log(x,y))
+    print math.log(x,y)
     break
     
 

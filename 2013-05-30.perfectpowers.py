@@ -1,6 +1,11 @@
 #/usr/bin/python
 import math
 
+'''
+I took into account the fact that Y is always a prime number. 
+Since we are attempting to maximize 'p', we're looking for the smallest prime product Y. 
+Once we have the smallest prime product, simply do a log (x) base y.
+'''
 def is_prime(n):
   for x in range(2,int(n**.5) + 1):
     if n % x == 0:
@@ -13,12 +18,6 @@ def list_primes():
     if is_prime(n):
       yield n
     n+=1
-
-def infinity():
-  i = 1
-  while True:
-    yield i
-    i += 1
 
 x = int(raw_input())      
 for y in list_primes():

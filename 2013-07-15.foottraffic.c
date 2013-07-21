@@ -40,7 +40,7 @@ void printoutput();
 #define OUT 'O'
 
 struct room {
-  char timeinroom[MAX_VISITORS];
+  int timeinroom[MAX_VISITORS];
 };
 
 struct room ROOMS[MAX_ROOMS] = {0};
@@ -50,11 +50,14 @@ void readinput()
   int lines,visitorid,roomid,timestamp,linesread = 0;
   char direction;
 
-  scanf("%d",&lines);
+  FILE * pFile;
+  
+  pFile = fopen("foot_traffic.out","r");
+
+  fscanf(pFile,"%d",&lines);
   while (linesread < lines) 
   {
-    scanf("%d %d %c %d",&visitorid,&roomid,&direction,&timestamp);
-    // printf("Line Read: %d %d %c %d\n",visitorid,roomid,direction,timestamp); 
+    fscanf(pFile,"%d %d %c %d",&visitorid,&roomid,&direction,&timestamp);
     if (direction == IN) {
       ROOMS[roomid].timeinroom[visitorid] += timestamp;
     } else if (direction == OUT) {
@@ -62,6 +65,7 @@ void readinput()
     }
     linesread++;
   }
+  fclose(pFile);
 }
 
 void printoutput()
@@ -84,7 +88,7 @@ void printoutput()
     }
   }
 }
-main()
+int main()
 {
   readinput();
   printoutput();

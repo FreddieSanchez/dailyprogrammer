@@ -53,6 +53,7 @@ typedef struct element {
   int radius;
   Direction propigation[MAX_PROPIGATIONS];
   int active;
+  struct element ** neighbors;
 } Element;
 
 /* Macros */
@@ -65,10 +66,9 @@ typedef struct element {
 int createElement(Element ** e, Point p, int radius, char * direction) {
   int i; 
 
-  *e = (Element *)malloc(sizeof(Element));
+  *e = malloc(sizeof(Element));
   if (*e == NULL) return -1;
   
-
   (*e)->location = p;
   (*e)->radius = radius;
   
@@ -109,10 +109,11 @@ int areNeighbors(Element * e1, Element * e2) {
     case UP:
       {
         /* if they are on the same col, 
-           and e1 is below e2, and e1's activation radius
+           and e1 is below e2 (e1 has higher y value)
+           and e1's activation radius
            spans the distance between e1 and e2  */
         if (e1->location.x == e2->location.x &&
-            e1->location.y < e2->location.y &&
+            e1->location.y > e2->location.y &&
             e1->radius >= (e1->location.y - e2->location.y)) {
           return True;
         }
@@ -120,22 +121,25 @@ int areNeighbors(Element * e1, Element * e2) {
     case DOWN:
       { 
         /* if they are on the same col, 
-           and e1 is above e2, and e1's activation radius
+           and e1 is above e2 (e1 has a lower y value e2),
+           and e1's activation radius
            spans the distance between e1 and e2  */
         if (e1->location.x == e2->location.x &&
-            e1->location.y > e2->location.y &&
-            e1->radius >= (e1->location.y - e2->location.y)) {
+            e1->location.y < e2->location.y &&
+            e1->radius >= (e2->location.y - e1->location.y)) {
           return True;
         }
       }break;
     case LEFT:
       {
         /* if they are on the same row, 
-           and e1 is to the right of e2, and e1's activation radius
+           and e1 is to the right of e2, 
+           (e1 has a higher x value),
+           and e1's activation radius
            spans the distance between e1 and e2  */
         if (e1->location.y == e2->location.y &&
             e1->location.x > e2->location.x &&
-            e1->radius >= (e1->location.x - e2->location.x)) {
+            e1->radius >=(e1->location.x - e2->location.x)) {
           return True;
         }
       }break;
@@ -143,11 +147,13 @@ int areNeighbors(Element * e1, Element * e2) {
       {
 
         /* if they are on the same row, 
-           and e1 is to the left of e2, and e1's activation radius
+           and e1 is to the left of e2, 
+           (e1 has a lower x value)
+           and e1's activation radius
            spans the distance between e1 and e2  */
         if (e1->location.y == e2->location.y &&
             e1->location.x < e2->location.x &&
-            e1->radius >= (e1->location.x - e2->location.x)) {
+            (e1->radius >=(e2->location.x - e1->location.x))) {
           return True;
         }
       }break;
@@ -156,31 +162,27 @@ int areNeighbors(Element * e1, Element * e2) {
   return False;
 
 }
-int activateNeighbors(Element ** elements, Element *e, int N, int M, int step) {
+void activateNeighbors(Element ** elements, Element *e, int N, int M, int step) {
   int i = 0,j = 0, k= 0, curCntActivated = 0, prevCntActivated = 0;
   Element ** prevActivated;
   Element ** curActivated;
   Element ** temp;
 
 
-  prevActivated = (Element *)malloc(sizeof(Element *) * N);
-  curActivated = (Element *)malloc(sizeof(Element *) * N);
+  prevActivated = malloc(sizeof(Element *) * N);
+  curActivated = malloc(sizeof(Element *) * N);
   printf("Step %d\n",step++);
   printGrid(elements,N,M);
   prevActivated[prevCntActivated++] = e;
   activateElement(e);
-  sleep(1);
-  system("cls");
   while (prevCntActivated) {
-    printf("Step %d prev: %d\n",step++,prevCntActivated);
+    printf("Step %d\n",step++);
 
     printGrid(elements,N,M);
     sleep(1);
-    system("clear");
     for (i = 0; i < prevCntActivated; i++) {
       for (k = 0; k < N; k++) {
         if (areNeighbors(prevActivated[i],elements[k])) {
-
           activateElement(elements[k]);
           curActivated[curCntActivated++] = elements[k];
         }
@@ -198,7 +200,6 @@ int activateNeighbors(Element ** elements, Element *e, int N, int M, int step) {
   }
   free(prevActivated);
   free(curActivated);
-  return i;
 }
 int simulation(Element ** elements, int N, int M ) {
   activateNeighbors(elements,elements[0], N,M,0);

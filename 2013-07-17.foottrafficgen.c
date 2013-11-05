@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-void genevent(int * room, int * timein, int * timeout, int timestart, int timeend);
-
-
 int main(int argc, const char * argv[])
 {
   int event,visitor;
